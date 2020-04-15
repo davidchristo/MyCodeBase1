@@ -1,0 +1,113 @@
+package day1;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
+
+public class MyntraWorkout {
+	@SuppressWarnings("unlikely-arg-type")
+	public static void main(String[] args) throws InterruptedException {
+		System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver.exe");
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("--disable-notifications");
+		ChromeDriver driver = new ChromeDriver(options);
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		driver.get("https://www.myntra.com/");
+		WebElement women = driver.findElementByXPath("//a[text()='Women']");
+		Actions builder = new Actions(driver);
+		builder.moveToElement(women).perform();
+		Thread.sleep(3000);
+		WebElement jacoats = driver.findElementByXPath("//a[text()='Jackets & Coats']");	
+		builder.moveToElement(jacoats).click().perform();
+		
+		//getting total  number of jackets and coats
+		String noofjacks = driver.findElementByXPath("//span[@class='title-count']").getText();
+		String text = noofjacks.replaceAll("\\D","");
+		int totalcount = Integer.parseInt(text);
+		System.out.println(text);
+		
+		//getting the total no of jackets
+		String jackets = driver.findElementByXPath("(//span[@class='categories-num'])[1]").getText();
+		 String text1 = jackets.replaceAll("\\D","");
+		 int jackcount = Integer.parseInt(text1);
+		 System.out.println(text1);
+		 
+		 // getting no of coats
+		 
+		 String coats = driver.findElementByXPath("(//span[@class='categories-num'])[2]").getText();
+		 String text2 = coats.replaceAll("\\D","");
+		 int coatcount = Integer.parseInt(text2);
+		 System.out.println(text2);
+		 
+		 if (totalcount == jackcount+coatcount) {
+			 System.out.println("count matched");
+			 
+		}else {
+			System.out.println("Count mismatch" );
+		}
+		 
+		 //filtering coats
+		 driver.findElementByXPath("(//div[@class='common-checkboxIndicator'])[2]").click();
+		 // clicking on more brands
+		 driver.findElementByXPath("//div[@class='brand-more']").click();
+		 //enter mango in search box
+		 driver.findElementByXPath("//input[@class='FilterDirectory-searchInput']").sendKeys("Mango");
+		 Thread.sleep(3000);
+		 //clicking mango brand check box
+		 driver.findElementByXPath("(//label[text()='MANGO'])[2]").click(); 
+		 driver.findElementByXPath("//span[contains(@class,'myntraweb-sprite FilterDirectory-close')]").click();
+		 Thread.sleep(3000);
+		 //list of mango coats
+		 List<WebElement> mangocoats = driver.findElementsByXPath("//h3[text()='MANGO']");
+//		 for (int i = 0; i < mangocoats.size(); i++) {
+//				System.out.println(mangocoats.get(i).getText());
+//	}
+				
+				for (WebElement mc : mangocoats) {
+					String text312 = mc.getText();
+					if (text312.contains("MANGO")) {
+												
+					}	
+				System.out.println("all brands are of type Mango");
+				}
+
+				 
+				 Thread.sleep(3000);		 
+		WebElement recommend = driver.findElementByXPath("//span[text()='Recommended']");
+		builder.moveToElement(recommend).perform();
+		Thread.sleep(3000);
+		WebElement betterdiscount = driver.findElementByXPath("//label[text()='Better Discount']");
+		builder.moveToElement(betterdiscount).click().perform();
+		
+		List<WebElement> pricelist = driver.findElementsByXPath("//span[@class='product-discountedPrice']");
+		for (int i = 0; i < pricelist.size(); i++) {
+			System.out.println(pricelist.get(i).getText());
+				
+			}
+			
+//		WebElement firstitem = driver.findElementByXPath("(//span[@class='product-actionsButton product-wishlist product-prelaunchBtn'])[1]");
+//		builder.moveToElement(firstitem).click().perform();
+		
+		
+		
+		WebElement fstitem = driver.findElementByXPath("(//span[text()='9990'])[1]");
+		System.out.println(fstitem.getText());
+		builder.moveToElement(fstitem).click().perform();
+		Thread.sleep(3000);
+		
+		Set<String> windowHandles = driver.getWindowHandles();
+		List<String> wh = new ArrayList<String>(windowHandles);
+		driver.switchTo().window(wh.get(1));
+		driver.findElementByXPath("//span[text()='WISHLIST NOW']").click();
+		driver.quit();
+	}
+	
+}
