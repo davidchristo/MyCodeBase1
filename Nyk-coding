@@ -1,0 +1,111 @@
+package day1;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
+
+public class Day2_Nykaa {
+
+	public static void main(String[] args) throws InterruptedException {
+		System.setProperty("webdriver.chrome.driver", "./drivers/chromedriver.exe");
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("--disable-notifications");
+		ChromeDriver driver = new ChromeDriver(options);
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		driver.get("https://www.nykaa.com/");
+		Actions builder = new Actions(driver);
+		Thread.sleep(3000);
+		//moving to the header of the site
+		WebElement header = driver.findElementById("HeaderWrapper");
+		builder.moveToElement(header).perform();
+		
+		// moving to the brands section
+		WebElement brands = driver.findElementByXPath("//a[text()='brands']");
+		builder.moveToElement(brands).perform();
+		Thread.sleep(3000);
+		
+		//moving to popular items
+		WebElement popular = driver.findElementByXPath("//a[text()='Popular']");
+		builder.moveToElement(popular).perform();
+		Thread.sleep(3000);
+		
+		//Click on loreal products
+		WebElement loreal = driver.findElementByXPath("(//li[@class='brand-logo menu-links']//img)[5]");
+		builder.moveToElement(loreal).click().perform();
+		
+		// switching to new window
+		Set<String> windowHandles = driver.getWindowHandles();
+		List<String> wh = new ArrayList<String>(windowHandles);
+		driver.switchTo().window(wh.get(1));
+		System.out.println(driver.getTitle());
+		
+		//selecting popularity drop down
+		driver.findElementByXPath("//i[@class='fa fa-angle-down']").click();
+		Thread.sleep(3000);
+		
+		//selecting top rated customer product
+		driver.findElementByXPath("(//div[@class='control__indicator radio'])[4]").click();
+		Thread.sleep(3000);
+		
+		//select the available products category
+		driver.findElementByXPath("(//div[@class='clearfix'])[2]").click();
+		
+		//selecting shampoo from the list
+		driver.findElementByXPath("//span[text()='Shampoo (16)']").click();
+		
+		// clicking the desired product --> color protected shampoo
+		driver.findElement(By.xpath("(//img[@class='listing-img'])[4]")).click();
+		
+		// switching the new window again
+		Set<String> windowHandles1 = driver.getWindowHandles();
+		List<String> wh1 = new ArrayList<String>(windowHandles1);
+		driver.switchTo().window(wh1.get(2));
+		System.out.println(driver.getTitle());
+		Thread.sleep(3000);
+		
+		
+		// selecting 175ml bottle
+		driver.findElementByXPath("//span[text()='175ml']").click();
+		
+		//Printing the MRP of the product
+		String Mrp = driver.findElementByXPath("//span[@class='post-card__content-price-offer']").getText();
+		System.out.println("Maximun retail price of the product is " +Mrp);
+		
+		//clicking add to bag button
+		driver.findElementByXPath("//button[@class='combo-add-to-btn prdt-des-btn js--toggle-sbag nk-btn nk-btn-rnd atc-simple m-content__product-list__cart-btn  ']")
+		.click();
+		Thread.sleep(3000);
+		
+		// clicking on shopping bag
+		driver.findElementByXPath("//div[@class='AddBagIcon']").click();
+		Thread.sleep(3000);
+		
+		
+		//printing the grand total of the product
+		String grandtotal = driver.findElementByXPath("(//div[@class='value'])[4]").getText();
+		System.out.println("The Grand total of the bag is "  +grandtotal);
+
+		//Clicking on proceed button
+		driver.findElementByXPath("//button[@class='btn full fill no-radius proceed ']").click();
+		
+		//Clicking on continue as guest to move on
+		driver.findElementByXPath("//button[@class='btn full big']").click();
+		
+		//print the warning message page for delay in delivery of the product
+		String warning = driver.findElementByXPath("//div[text()='Please expect delay in shipments because of the national lockdown']").getText();
+		System.out.println(warning);
+		
+		//closing all the windows
+		driver.quit();
+		
+	}
+
+}
